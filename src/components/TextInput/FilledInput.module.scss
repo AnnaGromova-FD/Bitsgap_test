@@ -5,14 +5,15 @@
   .inputLabel {
     color: rgba(255, 255, 255, 0.5) !important;
     font-size: 15px;
-    top: -2px;
-    left: -3px;
+    z-index: 10;
+    top: 20px;
+    left: 9px;
     white-space: nowrap;
   }
 
   .input {
     padding: 22px 9px 7px;
-    color:#fff;
+    color: #fff;
   }
 
   // MUI applies classes to both input element and its wrapper
@@ -20,9 +21,9 @@
     font-size: 15px;
     border-radius: 0;
     border: 1px solid transparent;
-    color: rgba(255,255,255,.5);
-    background-color:  #1d1a28;
-  
+    color: rgba(255, 255, 255, 0.5);
+    background-color: #1d1a28;
+
     &:hover {
       background-color: rgba(255, 255, 255, 0.03);
     }

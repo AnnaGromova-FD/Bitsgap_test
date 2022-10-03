@@ -1,36 +1,36 @@
-import React from "react";
-import cn from "classnames";
+import React from 'react';
+import cn from 'classnames';
 
-import styles from "./Switch.module.scss";
+import styles from './Switch.module.scss';
 
 type Props = {
-  checked: boolean;
+  isChecked: boolean;
+  handleChange: (event: any) => void;
   label?: string;
   disabled?: boolean;
   reversed?: boolean;
   fullWidth?: boolean;
-  onChange?(value: boolean): void;
 };
 
-function Switch({
-  checked,
-  onChange,
+const Switch = ({
+  isChecked,
+  handleChange,
   disabled = false,
   reversed,
   fullWidth,
-  label
-}: Props) {
+  label,
+}: Props) => {
   return (
     <label
       className={cn(styles.root, {
         [styles.reversed]: reversed,
-        [styles.fullWidth]: fullWidth
+        [styles.fullWidth]: fullWidth,
       })}
     >
       <input
         className={styles.checkbox}
-        type="checkbox"
-        checked={checked}
+        type='checkbox'
+        checked={isChecked}
         onChange={handleChange}
         disabled={disabled}
       />
@@ -38,10 +38,6 @@ function Switch({
       {label && <span className={styles.label}>{label}</span>}
     </label>
   );
+};
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    onChange && onChange(e.target.checked);
-  }
-}
-
-export { Switch };
+export {Switch};

@@ -7,26 +7,39 @@
   color: #fff;
 
   &:hover {
-    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0px rgba(0, 0, 0, 0.14),
-      0 1px 10px 0px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2),
+      0 4px 5px 0px rgba(0, 0, 0, 0.14), 0 1px 10px 0px rgba(0, 0, 0, 0.12);
   }
 
   &.green {
     border-color: #4caf50;
     background-color: #4caf50;
-  
+
     &:hover {
       background-color: #4caf50;
     }
   }
-  
+
   &.red {
     background-color: #f44336;
     border-color: #f44336;
-  
+
     &:hover {
       background-color: #f44336;
     }
+  }
+
+  &.transparent {
+    background-color: transparent;
+    color: #0078ff;
+    border-color: transparent;
+    border: none;
+    justify-content: flex-start;
+    margin-top: 8px;
+  }
+
+  &.invisible {
+    display: none;
   }
 
   &.inactive {
@@ -58,11 +71,11 @@
     }
   }
 
-    &.small {
-      padding: 3px 0;
-    }
+  &.small {
+    padding: 3px 0;
+  }
 
-    &.normal {
-      padding: 8px 0;
-    }
+  &.normal {
+    padding: 8px 0;
+  }
 }

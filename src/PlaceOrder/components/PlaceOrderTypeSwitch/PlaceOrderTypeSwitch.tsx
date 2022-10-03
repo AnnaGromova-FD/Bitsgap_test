@@ -8,13 +8,12 @@ import styles from './PlaceOrderTypeSwitch.module.scss';
 
 type Props = {
   activeOrderSide: OrderSide;
-  onChange: (OrderSide: OrderSide) => void;
+  onChange(OrderSide: OrderSide): void;
 };
 
 const PlaceOrderTypeSwitch = ({activeOrderSide, onChange}: Props) => {
   const handleToggle = (orderType: OrderSide) => {
     onChange(orderType);
-    console.log(orderType);
   };
 
   return (

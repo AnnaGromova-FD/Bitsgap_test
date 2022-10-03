@@ -12,7 +12,7 @@ import {TakeProfit} from './components/TakeProfit/TakeProfit';
 
 import styles from './PlaceOrderForm.module.scss';
 
-export const PlaceOrderForm = observer(() => {
+export const PlaceOrderForm = observer(function OrderForm() {
   const {
     activeOrderSide,
     price,

@@ -1,26 +1,26 @@
-import React from "react";
-import { Button as MUIButton, ButtonProps } from "@material-ui/core";
-import cn from "classnames";
+import React from 'react';
+import {Button as MUIButton, ButtonProps} from '@material-ui/core';
+import cn from 'classnames';
 
-import styles from "./Button.module.scss";
+import styles from './Button.module.scss';
 
-type Props = Omit<ButtonProps, "color" | "size"> & {
-  color: "green" | "red";
-  size?: "small" | "normal";
+type Props = Omit<ButtonProps, 'color' | 'size'> & {
+  color: 'green' | 'red' | 'transparent' | 'invisible';
+  size?: 'small' | 'normal';
   inactive?: boolean;
 };
 
 const Button: React.FC<Props> = ({
   children,
   color,
-  size = "normal",
+  size = 'normal',
   inactive = false,
   ...rest
 }) => (
   <MUIButton
     disableRipple
     className={cn(styles.root, styles[color], styles[size], {
-      [styles.inactive]: inactive
+      [styles.inactive]: inactive,
     })}
     {...rest}
   >
@@ -28,4 +28,4 @@ const Button: React.FC<Props> = ({
   </MUIButton>
 );
 
-export { Button };
+export {Button};
