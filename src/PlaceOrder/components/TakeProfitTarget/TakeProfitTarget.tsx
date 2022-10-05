@@ -10,18 +10,15 @@ import styles from './TakeProfitTarget.module.scss';
 
 const TakeProfitTarget = ({
   id,
-  profit,
-  targetPrice,
   targetAmount,
   handleDelete,
 }: {
   id: number;
-  profit: number;
-  targetPrice: number;
   targetAmount: number;
   handleDelete: (id: number) => void;
 }) => {
-  const {setPrice, setAmount, setProfit} = useStore();
+  const {setTargetPrice, setProfit, setTargetAmount, targetPrice, profit} =
+    useStore();
 
   return (
     <>
@@ -39,7 +36,7 @@ const TakeProfitTarget = ({
           <NumberInput
             label='Target price'
             value={targetPrice}
-            onChange={value => setPrice(Number(value))}
+            onChange={value => setTargetPrice(Number(value))}
             InputProps={{endAdornment: QUOTE_CURRENCY}}
             variant='underlined'
           />
@@ -48,7 +45,7 @@ const TakeProfitTarget = ({
           <NumberInput
             label='Amount to sell'
             value={targetAmount}
-            onChange={value => setAmount(Number(value))}
+            onChange={value => setTargetAmount(Number(value))}
             InputProps={{endAdornment: '%'}}
             variant='underlined'
           />

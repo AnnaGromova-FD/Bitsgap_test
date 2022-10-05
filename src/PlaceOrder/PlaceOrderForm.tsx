@@ -25,7 +25,7 @@ export const PlaceOrderForm = observer(function OrderForm() {
   } = useStore();
 
   return (
-    <form className={styles.root}>
+    <form id='order-form' className={styles.root}>
       <div className={styles.header}>
         Binance: {`${BASE_CURRENCY} / ${QUOTE_CURRENCY}`}
         <IconButton className={styles.closeIcon}>

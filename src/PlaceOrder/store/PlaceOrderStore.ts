@@ -1,6 +1,6 @@
 import {observable, computed, action, makeObservable} from 'mobx';
 
-import {OrderSide, TakeProfitDataType} from '../model';
+import {OrderSide} from '../model';
 
 export class PlaceOrderStore {
   @observable activeOrderSide: OrderSide = 'buy';
@@ -8,7 +8,6 @@ export class PlaceOrderStore {
   @observable amount: number = 1;
   @observable profit: number = 2;
   @observable targetAmount: number = 100;
-  @observable targetPrice: number = 0;
 
   constructor() {
     makeObservable(this);
@@ -18,12 +17,17 @@ export class PlaceOrderStore {
     return this.price * this.amount;
   }
 
-  @computed get getTargetPrice(): number {
+  @computed get projectedProfit(): number {
+    return (this.targetAmount / 100) * (this.targetPrice - this.price);
+  }
+
+  @computed get targetPrice(): number {
     return this.price + this.price * (this.profit / 100);
   }
 
-  @computed get projectedProfit(): number {
-    return (this.targetAmount / 100) * (this.getTargetPrice - this.price);
+  @action.bound
+  public setTargetPrice(price: number) {
+    this.profit = this.price > 0 ? (price * 100) / this.price - 100 : 0;
   }
 
   @action.bound
@@ -52,28 +56,13 @@ export class PlaceOrderStore {
   }
 
   @action.bound
+  public setTargetAmount(value = 20) {
+    value ? (this.targetAmount = value) : (this.targetAmount = 20);
+  }
+
+  @action.bound
   public resetProfit() {
     this.profit = 2;
     this.targetAmount = 100;
-  }
-
-  @action.bound
-  public calcProjectedProfit(profitData: TakeProfitDataType[]) {
-    if (!profitData) return;
-    return profitData.reduce((acc: number, item: {projectedProfit: number}) => {
-      return acc + item.projectedProfit;
-    }, 0);
-  }
-
-  @action.bound
-  public calcAllTargetAmount(profitData: TakeProfitDataType[]) {
-    if (!profitData) return;
-    const calculatedTargetAmount = profitData.reduce(
-      (acc: number, item: {targetAmount: number}) => {
-        return acc + item.targetAmount;
-      },
-      0
-    );
-    return calculatedTargetAmount;
   }
 }
