@@ -20,18 +20,6 @@ const TakeProfit = observer(function TakeProfitForm() {
     projectedProfit,
   } = useStore();
 
-  // let projectedProfit =
-  //   activeOrderSide === 'buy'
-  //     ? (targetAmount / 100) * targetPrice - price
-  //     : amount * (targetPrice - price);
-
-  // const handleChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setIsChecked(!isChecked);
-  //   isChecked === true ? showTakeProfitRow(false) : showTakeProfitRow(true);
-  //   console.log(isChecked);
-  //   takeProfitRows.length === 0 && setIsChecked(false);
-  // };
-
   return (
     <>
       <div className={styles.root}>

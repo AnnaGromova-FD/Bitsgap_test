@@ -34,7 +34,7 @@ export const PlaceOrderForm = observer(function OrderForm() {
     e.preventDefault();
 
     validateForm();
-    if (isFormValid) {
+    if (isFormValid === true) {
       console.log('FORM SUCCESSFULLY SUBMITED');
     }
   };

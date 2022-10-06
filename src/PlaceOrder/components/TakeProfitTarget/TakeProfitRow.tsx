@@ -27,7 +27,8 @@ const TakeProfitRow = ({
   targetPriceError: any;
   amountError: any;
 }) => {
-  const {setTargetPrice, setTargetProfit, setTargetAmount} = useStore();
+  const {activeOrderSide, setTargetPrice, setTargetProfit, setTargetAmount} =
+    useStore();
 
   return (
     <>
@@ -37,29 +38,31 @@ const TakeProfitRow = ({
             label='Profit'
             value={profit}
             onChange={value => setTargetProfit(id, Number(value) || 0)}
-            error={!!profitError}
+            error={profitError}
             decimalScale={2}
             InputProps={{endAdornment: '%'}}
             variant='underlined'
           />
         </div>
+
         <div className={styles.targetPrice}>
           <NumberInput
             label='Target price'
             value={targetPrice}
             onChange={value => setTargetPrice(id, Number(value))}
-            error={!!targetPriceError}
+            error={targetPriceError}
             InputProps={{endAdornment: QUOTE_CURRENCY}}
             variant='underlined'
           />
-          {/* <p>{targetPriceError}</p> */}
         </div>
         <div className={styles.targetAmount}>
           <NumberInput
-            label='Amount to sell'
+            label={
+              activeOrderSide === 'buy' ? 'Amount to sell' : 'Amount to buy'
+            }
             value={targetAmount}
             onChange={value => setTargetAmount(id, Number(value))}
-            error={!!amountError}
+            error={amountError}
             InputProps={{endAdornment: '%'}}
             variant='underlined'
           />

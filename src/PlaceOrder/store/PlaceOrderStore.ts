@@ -68,7 +68,11 @@ export class PlaceOrderStore {
           100;
 
       this.countSumOfProjectedProfit();
+      profitRowItem.targetPriceError = undefined;
     }
+    this.profitRows.forEach(row => {
+      row.profitError = undefined;
+    });
   }
 
   @action.bound
@@ -82,6 +86,7 @@ export class PlaceOrderStore {
         newPrice > 0 ? (newPrice * 100) / this.price - 100 : 0;
 
       this.countSumOfProjectedProfit();
+      profitRowItem.targetPriceError = undefined;
     }
   }
 
@@ -92,9 +97,11 @@ export class PlaceOrderStore {
 
     if (profitRowItem) {
       profitRowItem.targetAmount = value;
-      this.recountTargetAmount();
       this.countSumOfProjectedProfit();
     }
+    this.profitRows.forEach(row => {
+      row.amountError = undefined;
+    });
   }
 
   @action.bound
@@ -148,8 +155,8 @@ export class PlaceOrderStore {
     if (this.profitRows.length === 0) {
       this.showTakeProfitRow(false);
       this.projectedProfit = 0;
-      this.countSumOfProjectedProfit();
     }
+    this.countSumOfProjectedProfit();
   };
 
   @action.bound
@@ -176,21 +183,28 @@ export class PlaceOrderStore {
     );
   }
 
+  @action.bound
+  public countSumOfProfitRows() {
+    if (this.profitRows.length === 0) return 0;
+
+    return this.profitRows.reduce((result, item) => result + item.profit, 0);
+  }
+
   public countTakeProfitsTotalAmount() {
     return this.profitRows.reduce((acc, row) => acc + row.targetAmount, 0);
   }
 
   @action.bound
   public recountTargetAmount() {
-    const sumOfAmounts = this.countTakeProfitsTotalAmount();
+    const totalAmount = this.countTakeProfitsTotalAmount();
 
-    if (sumOfAmounts > 100) {
+    if (totalAmount > 100) {
       const profitWithMaxAmount = this.profitRows.reduce((result, item) =>
         result.targetAmount < item.targetAmount ? item : result
       );
 
       profitWithMaxAmount.targetAmount =
-        profitWithMaxAmount.targetAmount - (sumOfAmounts - 100);
+        profitWithMaxAmount.targetAmount - (totalAmount - 100);
 
       this.setTargetAmount(
         profitWithMaxAmount.id,
@@ -209,43 +223,33 @@ export class PlaceOrderStore {
 
   @action.bound
   public validateForm() {
-    let isValid = true;
-    let totalProfit = 0;
-    let totalAmount = 0;
-    console.log('validate');
+    let totalAmount = this.countTakeProfitsTotalAmount();
+
     this.profitRows.forEach((row, i) => {
-      // row.amountError = undefined;
-      // row.profitError = undefined;
-      // row.targetPriceError = undefined;
       const prevProfitPercent = this.profitRows[i - 1]?.profit || 0;
+      const totalProfit = this.countSumOfProfitRows();
 
       if (row.profit < 0.01) {
         row.profitError = 'Minimum value is 0.01';
-        isValid = false;
+        this.isFormValid = false;
       } else if (row.profit < prevProfitPercent) {
         row.profitError = `Each target's profit should be greater than the previous one`;
-        isValid = false;
+        this.isFormValid = false;
+      } else if (row.profit > 500 || totalProfit > 500) {
+        row.profitError = 'Maximum profit sum is 500%';
       }
 
       if (row.targetPrice <= 0) {
         row.targetPriceError = 'Price must be greater than 0';
-        isValid = false;
+        this.isFormValid = false;
+      }
+
+      if (totalAmount > 100) {
+        row.amountError = `${totalAmount}% out of 100% selected. Please decrease by ${
+          totalAmount - 100
+        }%`;
+        this.isFormValid = false;
       }
     });
-
-    if (totalProfit > 5) {
-      this.profitRows.forEach(
-        row => (row.profitError = 'Maximum profit sum is 500%')
-      );
-      isValid = false;
-    } else if (totalAmount > 100) {
-      const text = `${totalAmount}% out of 100% selected. Please decrease by ${
-        totalAmount * 100 - 100
-      }%`;
-      this.profitRows.forEach(row => (row.amountError = text));
-      isValid = false;
-    }
-
-    this.isFormValid = isValid;
   }
 }
