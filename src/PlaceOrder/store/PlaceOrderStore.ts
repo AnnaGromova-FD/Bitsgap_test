@@ -25,6 +25,7 @@ export class PlaceOrderStore {
   @action.bound
   public setOrderSide(side: OrderSide) {
     this.activeOrderSide = side;
+    this.handleChecked();
   }
 
   @action.bound
@@ -105,7 +106,7 @@ export class PlaceOrderStore {
   }
 
   @action.bound
-  public handleChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
+  public handleChecked = () => {
     this.isChecked === true
       ? this.showTakeProfitRow(false)
       : this.showTakeProfitRow(true);
@@ -160,10 +161,8 @@ export class PlaceOrderStore {
   };
 
   @action.bound
-  public countTakeProfitResult(
-    takeProfit: TakeProfitDataType,
-    isBuyOperation = true
-  ) {
+  public countTakeProfitResult(takeProfit: TakeProfitDataType) {
+    let isBuyOperation = this.activeOrderSide === 'buy';
     return (
       (this.amount *
         (isBuyOperation ? 1 : -1) *
@@ -224,6 +223,9 @@ export class PlaceOrderStore {
   @action.bound
   public validateForm() {
     let totalAmount = this.countTakeProfitsTotalAmount();
+    let profitInputValid = false;
+    let targetPriceInputValid = false;
+    let targetAmountInputValid = false;
 
     this.profitRows.forEach((row, i) => {
       const prevProfitPercent = this.profitRows[i - 1]?.profit || 0;
@@ -237,19 +239,21 @@ export class PlaceOrderStore {
         this.isFormValid = false;
       } else if (row.profit > 500 || totalProfit > 500) {
         row.profitError = 'Maximum profit sum is 500%';
-      }
+      } else profitInputValid = true;
 
       if (row.targetPrice <= 0) {
         row.targetPriceError = 'Price must be greater than 0';
         this.isFormValid = false;
-      }
+      } else targetPriceInputValid = true;
 
       if (totalAmount > 100) {
         row.amountError = `${totalAmount}% out of 100% selected. Please decrease by ${
           totalAmount - 100
         }%`;
         this.isFormValid = false;
-      }
+      } else targetAmountInputValid = true;
     });
+    this.isFormValid =
+      profitInputValid && targetPriceInputValid && targetAmountInputValid;
   }
 }

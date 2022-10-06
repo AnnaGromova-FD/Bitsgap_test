@@ -27,7 +27,7 @@ const TakeProfit = observer(function TakeProfitForm() {
           <span>
             Take Profit <HelpSharp className={styles.helpSharp} />
           </span>
-          <Switch isChecked={isChecked} handleChange={e => handleChecked(e)} />
+          <Switch isChecked={isChecked} handleChange={handleChecked} />
         </div>
         {isChecked &&
           profitRows.map(

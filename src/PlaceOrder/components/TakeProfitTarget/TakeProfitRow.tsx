@@ -29,7 +29,7 @@ const TakeProfitRow = ({
 }) => {
   const {activeOrderSide, setTargetPrice, setTargetProfit, setTargetAmount} =
     useStore();
-
+  let isBuyOperation = activeOrderSide === 'buy';
   return (
     <>
       <div className={styles.targetInputsBlock}>
@@ -57,9 +57,7 @@ const TakeProfitRow = ({
         </div>
         <div className={styles.targetAmount}>
           <NumberInput
-            label={
-              activeOrderSide === 'buy' ? 'Amount to sell' : 'Amount to buy'
-            }
+            label={isBuyOperation ? 'Amount to sell' : 'Amount to buy'}
             value={targetAmount}
             onChange={value => setTargetAmount(id, Number(value))}
             error={amountError}
