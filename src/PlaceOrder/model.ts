@@ -5,5 +5,8 @@ export type TakeProfitDataType = {
   profit: number;
   targetPrice: number;
   targetAmount: number;
-  projectedProfit: any;
+
+  profitError: string | undefined;
+  targetPriceError: string | undefined;
+  amountError: string | undefined;
 };

@@ -1,56 +1,36 @@
 /* eslint @typescript-eslint/no-use-before-define: 0 */
-import React, {useState} from 'react';
+import React from 'react';
 import {observer} from 'mobx-react';
-import {HelpSharp} from '@material-ui/icons';
+import {AddCircle, HelpSharp} from '@material-ui/icons';
 
 import {useStore} from '../../context';
-import {Switch} from 'components';
-import {TakeProfitTarget} from '../TakeProfitTarget/TakeProfitTarget';
+import {Button, Switch} from 'components';
+import {TakeProfitRow} from '../TakeProfitTarget/TakeProfitRow';
 import {QUOTE_CURRENCY} from 'PlaceOrder/constants';
-import {TakeProfitDataType} from '../../model';
 
 import styles from './TakeProfit.module.scss';
 
 const TakeProfit = observer(function TakeProfitForm() {
   const {
-    activeOrderSide,
-    amount,
-    price,
-    profit,
-    resetProfit,
-    setProfit,
-    targetAmount,
-    targetPrice,
+    addTargetProfit,
+    deleteProfitTarget,
+    isChecked,
+    handleChecked,
+    profitRows,
+    projectedProfit,
   } = useStore();
 
-  const [profitData, setTargetProfit] = useState<TakeProfitDataType[]>([]);
-  const [isChecked, setIsChecked] = useState(!!profitData.length);
+  // let projectedProfit =
+  //   activeOrderSide === 'buy'
+  //     ? (targetAmount / 100) * targetPrice - price
+  //     : amount * (targetPrice - price);
 
-  let projectedProfit =
-    activeOrderSide === 'buy'
-      ? (targetAmount / 100) * targetPrice - price
-      : amount * (targetPrice - price);
-
-  const profitBlockData: TakeProfitDataType = {
-    id: Math.random(),
-    profit,
-    targetPrice,
-    targetAmount,
-    projectedProfit,
-  };
-
-  const handleChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsChecked(!isChecked);
-    isChecked === false && resetProfit();
-
-    setTargetProfit(() => [profitBlockData]);
-  };
-
-  const deleteProfitTarget = (id: number) => {
-    setTargetProfit(profitData.filter(t => t.id !== id));
-    setProfit(profit - 2);
-    if (!profitData || profitData.length === 1) setIsChecked(false);
-  };
+  // const handleChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setIsChecked(!isChecked);
+  //   isChecked === true ? showTakeProfitRow(false) : showTakeProfitRow(true);
+  //   console.log(isChecked);
+  //   takeProfitRows.length === 0 && setIsChecked(false);
+  // };
 
   return (
     <>
@@ -59,23 +39,48 @@ const TakeProfit = observer(function TakeProfitForm() {
           <span>
             Take Profit <HelpSharp className={styles.helpSharp} />
           </span>
-          <Switch isChecked={isChecked} handleChange={handleChecked} />
+          <Switch isChecked={isChecked} handleChange={e => handleChecked(e)} />
         </div>
         {isChecked &&
-          profitData.map(({id, profit, targetPrice, targetAmount}) => {
-            return (
-              <TakeProfitTarget
-                id={id}
-                key={id}
-                targetAmount={targetAmount}
-                handleDelete={() => deleteProfitTarget(id)}
-              />
-            );
-          })}
+          profitRows.map(
+            ({
+              id,
+              profit,
+              targetPrice,
+              targetAmount,
+              profitError,
+              targetPriceError,
+              amountError,
+            }) => {
+              return (
+                <TakeProfitRow
+                  id={id}
+                  key={id}
+                  targetPrice={targetPrice}
+                  profit={profit}
+                  targetAmount={targetAmount}
+                  handleDelete={() => deleteProfitTarget(id)}
+                  profitError={profitError}
+                  amountError={amountError}
+                  targetPriceError={targetPriceError}
+                />
+              );
+            }
+          )}
+        {isChecked && (
+          <Button
+            color={profitRows.length < 5 ? 'transparent' : 'invisible'}
+            inactive={false}
+            startIcon={<AddCircle />}
+            onClick={() => addTargetProfit()}
+          >
+            Add profit target {profitRows.length} / 5
+          </Button>
+        )}
         <div className={styles.projectedProfitWrapper}>
           <span>Projected profit</span>
           <div>
-            {isChecked ? projectedProfit : '0'} &nbsp;
+            {isChecked ? projectedProfit.toFixed(2) : '0'} &nbsp;
             <span>{QUOTE_CURRENCY}</span>
           </div>
         </div>

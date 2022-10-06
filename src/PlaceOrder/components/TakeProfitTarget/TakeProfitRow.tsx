@@ -6,19 +6,28 @@ import {useStore} from '../../context';
 import {QUOTE_CURRENCY} from 'PlaceOrder/constants';
 import {NumberInput} from 'components';
 
-import styles from './TakeProfitTarget.module.scss';
+import styles from './TakeProfitRow.module.scss';
 
-const TakeProfitTarget = ({
+const TakeProfitRow = ({
   id,
   targetAmount,
+  targetPrice,
+  profit,
   handleDelete,
+  profitError,
+  targetPriceError,
+  amountError,
 }: {
   id: number;
   targetAmount: number;
+  targetPrice: number;
+  profit: number;
   handleDelete: (id: number) => void;
+  profitError: any;
+  targetPriceError: any;
+  amountError: any;
 }) => {
-  const {setTargetPrice, setProfit, setTargetAmount, targetPrice, profit} =
-    useStore();
+  const {setTargetPrice, setTargetProfit, setTargetAmount} = useStore();
 
   return (
     <>
@@ -27,7 +36,9 @@ const TakeProfitTarget = ({
           <NumberInput
             label='Profit'
             value={profit}
-            onChange={value => setProfit(Number(value))}
+            onChange={value => setTargetProfit(id, Number(value) || 0)}
+            error={!!profitError}
+            decimalScale={2}
             InputProps={{endAdornment: '%'}}
             variant='underlined'
           />
@@ -36,16 +47,19 @@ const TakeProfitTarget = ({
           <NumberInput
             label='Target price'
             value={targetPrice}
-            onChange={value => setTargetPrice(Number(value))}
+            onChange={value => setTargetPrice(id, Number(value))}
+            error={!!targetPriceError}
             InputProps={{endAdornment: QUOTE_CURRENCY}}
             variant='underlined'
           />
+          {/* <p>{targetPriceError}</p> */}
         </div>
         <div className={styles.targetAmount}>
           <NumberInput
             label='Amount to sell'
             value={targetAmount}
-            onChange={value => setTargetAmount(Number(value))}
+            onChange={value => setTargetAmount(id, Number(value))}
+            error={!!amountError}
             InputProps={{endAdornment: '%'}}
             variant='underlined'
           />
@@ -64,4 +78,4 @@ const TakeProfitTarget = ({
   );
 };
 
-export {TakeProfitTarget};
+export {TakeProfitRow};

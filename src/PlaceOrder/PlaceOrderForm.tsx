@@ -22,10 +22,29 @@ export const PlaceOrderForm = observer(function OrderForm() {
     setAmount,
     setTotal,
     setOrderSide,
+    validateForm,
+    isFormValid,
   } = useStore();
 
+  const handleSubmitForm = (
+    e:
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>
+      | React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+
+    validateForm();
+    if (isFormValid) {
+      console.log('FORM SUCCESSFULLY SUBMITED');
+    }
+  };
+
   return (
-    <form id='order-form' className={styles.root}>
+    <form
+      id='order-form'
+      className={styles.root}
+      onSubmit={e => handleSubmitForm(e)}
+    >
       <div className={styles.header}>
         Binance: {`${BASE_CURRENCY} / ${QUOTE_CURRENCY}`}
         <IconButton className={styles.closeIcon}>
@@ -71,6 +90,7 @@ export const PlaceOrderForm = observer(function OrderForm() {
             color={activeOrderSide === 'buy' ? 'green' : 'red'}
             type='submit'
             fullWidth
+            onClick={e => handleSubmitForm(e)}
           >
             {activeOrderSide === 'buy'
               ? `Buy ${BASE_CURRENCY}`
