@@ -3,58 +3,81 @@ import {observable, computed, action, makeObservable} from 'mobx';
 import {OrderSide, TakeProfitDataType} from '../model';
 
 export class PlaceOrderStore {
-  @observable activeOrderSide: OrderSide = 'buy';
-  @observable price: number = 1000;
-  @observable amount: number = 1;
-  @observable profitRows: TakeProfitDataType[] = [];
-  @observable profit: number = 0;
-  @observable targetAmount: number = 100;
-  @observable projectedProfit: number = 0;
+  activeOrderSide: OrderSide = 'buy';
+  price: number = 0;
+  amount: number = 0;
+  profitRows: TakeProfitDataType[] = [];
+  profit: number = 0;
+  targetAmount: number = 100;
+  projectedProfit: number = 0;
 
-  @observable isChecked: boolean = false;
-  @observable isFormValid: boolean = true;
+  isChecked: boolean = false;
+  isFormValid: boolean = true;
 
   constructor() {
-    makeObservable(this);
+    makeObservable(this, {
+      activeOrderSide: observable,
+      price: observable,
+      amount: observable,
+      profitRows: observable,
+      profit: observable,
+      targetAmount: observable,
+      projectedProfit: observable,
+      isChecked: observable,
+      isFormValid: observable,
+      total: computed,
+      setOrderSide: action.bound,
+      setPrice: action.bound,
+      setAmount: action.bound,
+      setTotal: action.bound,
+      setProfit: action.bound,
+      findElement: action.bound,
+      setTargetProfit: action.bound,
+      setTargetPrice: action.bound,
+      setTargetAmount: action.bound,
+      handleChecked: action.bound,
+      showTakeProfitRow: action.bound,
+      addTargetProfit: action.bound,
+      resetProfit: action.bound,
+      deleteProfitTarget: action.bound,
+      countTakeProfitResult: action.bound,
+      countSumOfProjectedProfit: action.bound,
+      countSumOfProfitRows: action.bound,
+      recountTargetAmount: action.bound,
+      validateForm: action.bound,
+    });
   }
 
-  @computed get total(): number {
+  get total(): number {
     return this.price * this.amount;
   }
 
-  @action.bound
   public setOrderSide(side: OrderSide) {
     this.activeOrderSide = side;
     this.handleChecked();
   }
 
-  @action.bound
   public setPrice(price: number) {
     this.price = price;
   }
 
-  @action.bound
   public setAmount(amount: number) {
     this.amount = amount;
     this.countSumOfProjectedProfit();
   }
 
-  @action.bound
   public setTotal(total: number) {
     this.amount = this.price > 0 ? total / this.price : 0;
   }
 
-  @action.bound
   public setProfit(profit: number) {
     this.profit = profit;
   }
 
-  @action.bound
   public findElement(id: number) {
     return this.profitRows.find(t => t.id === id);
   }
 
-  @action.bound
   public setTargetProfit(id: number, newProfit: number) {
     const profitRowItem = this.findElement(id);
 
@@ -76,7 +99,6 @@ export class PlaceOrderStore {
     });
   }
 
-  @action.bound
   public setTargetPrice(id: number, newPrice: number) {
     const profitRowItem = this.findElement(id);
 
@@ -91,7 +113,6 @@ export class PlaceOrderStore {
     }
   }
 
-  @action.bound
   public setTargetAmount(id: number, value: number) {
     this.targetAmount = value;
     const profitRowItem = this.findElement(id);
@@ -105,21 +126,18 @@ export class PlaceOrderStore {
     });
   }
 
-  @action.bound
   public handleChecked = () => {
     this.isChecked === true
       ? this.showTakeProfitRow(false)
       : this.showTakeProfitRow(true);
   };
 
-  @action.bound
   public showTakeProfitRow(value: boolean) {
     if (value === false) return this.resetProfit();
     this.addTargetProfit();
     this.isChecked = true;
   }
 
-  @action.bound
   public addTargetProfit() {
     const prevProfitPercent =
       this.profitRows[this.profitRows.length - 1]?.profit || 0;
@@ -142,14 +160,12 @@ export class PlaceOrderStore {
     return newProfitRow;
   }
 
-  @action.bound
   public resetProfit() {
     this.profitRows = [];
     this.projectedProfit = 0;
     this.isChecked = false;
   }
 
-  @action.bound
   public deleteProfitTarget = (id: number) => {
     this.profitRows = this.profitRows.filter(t => t.id !== id);
 
@@ -160,7 +176,6 @@ export class PlaceOrderStore {
     this.countSumOfProjectedProfit();
   };
 
-  @action.bound
   public countTakeProfitResult(takeProfit: TakeProfitDataType) {
     let isBuyOperation = this.activeOrderSide === 'buy';
     return (
@@ -172,7 +187,6 @@ export class PlaceOrderStore {
     );
   }
 
-  @action.bound
   public countSumOfProjectedProfit() {
     if (this.profitRows.length === 0) return 0;
 
@@ -182,7 +196,6 @@ export class PlaceOrderStore {
     );
   }
 
-  @action.bound
   public countSumOfProfitRows() {
     if (this.profitRows.length === 0) return 0;
 
@@ -193,7 +206,6 @@ export class PlaceOrderStore {
     return this.profitRows.reduce((acc, row) => acc + row.targetAmount, 0);
   }
 
-  @action.bound
   public recountTargetAmount() {
     const totalAmount = this.countTakeProfitsTotalAmount();
 
@@ -220,7 +232,6 @@ export class PlaceOrderStore {
     );
   }
 
-  @action.bound
   public validateForm() {
     let totalAmount = this.countTakeProfitsTotalAmount();
     let profitInputValid = false;
